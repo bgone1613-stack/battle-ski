@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Battle Cerdas Cermat SKI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #059669;
+            --bg-color: #0F172A;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --dana-blue: #38BDF8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #064e3b 100%); 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px; 
+        }
+        .container { 
+            width: 100%; 
+            max-width: 650px; 
+            background: var(--card-bg); 
+            backdrop-filter: blur(12px); 
+            border-radius: 20px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+            overflow: hidden; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+        .header { 
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.8) 0%, rgba(4, 120, 87, 0.8) 100%); 
+            color: white; 
+            padding: 30px; 
+            text-align: center; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .header p { font-size: 13px; opacity: 0.9; color: #E2E8F0; }
+        
+        .content { padding: 25px; }
+        .section-box { 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 14px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            backdrop-filter: blur(5px);
+        }
+        .section-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: var(--text-main); }
+        
+        /* Polling */
+        .poll-btns { display: flex; gap: 10px; }
+        .btn-poll { 
+            flex: 1; padding: 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); 
+            background: rgba(255, 255, 255, 0.08); color: var(--text-main); font-weight: 600; cursor: pointer; transition: all 0.2s; 
+        }
+        .btn-poll:hover { background: rgba(5, 150, 105, 0.3); border-color: var(--primary); color: #34D399; }
+        .poll-result { margin-top: 12px; font-size: 13px; color: var(--text-muted); text-align: center; }
+
+        /* Form */
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase; }
+        .form-input, .form-select { 
+            width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.6); 
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; font-size: 14px; color: white; outline: none; 
+        }
+        .form-select option { background: #1E293B; color: white; }
+        
+        .dana-info { 
+            background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); 
+            border-radius: 10px; padding: 14px; font-size: 13px; color: #E0F2FE; margin-bottom: 15px; display: flex; gap: 12px; 
+        }
+        
+        .btn-submit { 
+            width: 100%; background: linear-gradient(135deg, #059669 0%, #047857 100%); 
+            color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; 
+        }
+
+        /* Daftar Peserta Terkelompok */
+        .category-group { margin-bottom: 15px; }
+        .category-title { font-size: 13px; font-weight: 700; color: #34D399; margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; display: flex; justify-content: space-between; }
+        .participant-card { 
+            background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255,255,255,0.05); 
+            padding: 8px 12px; border-radius: 8px; font-size: 13px; display: flex; justify-content: space-between; margin-bottom: 6px; 
+        }
+        .status-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #F59E0B; color: white; }
+        .status-badge.verified { background: #10B981; }
+
+        /* Jadwal & Soal Online */
+        .schedule-box { text-align: center; padding: 10px; }
+        .btn-battle-room { 
+            display: inline-block; margin-top: 10px; background: #38BDF8; color: #0F172A; 
+            padding: 10px 20px; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 13px; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1><i class="fa-solid fa-gamepad" style="color: #FCD34D;"></i> Battle Cerdas Cermat SKI</h1>
+        <p>Polling, Pendaftaran Iuran Transparan, & Ruang Soal Online</p>
+    </div>
+    
+    <div class="content">
+        <!-- 1. Polling -->
+        <div class="section-box">
+            <div class="section-title"><i class="fa-solid fa-square-poll-vertical" style="color: #34D399;"></i> 1. Polling Persetujuan Event</div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Apakah kamu setuju minggu ini diadakan Battle Cerdas Cermat?</p>
+            <div class="poll-btns">
+                <button class="btn-poll" onclick="submitPoll('Setuju')"><i class="fa-solid fa-check"></i> Setuju</button>
+                <button class="btn-poll" onclick="submitPoll('Tidak')"><i class="fa-solid fa-xmark"></i> Belum Dulu</button>
+            </div>
+            <div class="poll-result" id="poll-status">Total suara masuk: Memuat...</div>
+        </div>
+
+        <!-- 2. Pendaftaran & Iuran -->
+        <div class="section-box">
+            <div class="section-title"><i class="fa-solid fa-ticket" style="color: #38BDF8;"></i> 2. Pendaftaran Peserta & Kategori Iuran</div>
+            <div class="dana-info">
+                <i class="fa-solid fa-wallet" style="font-size: 20px; color: var(--dana-blue);"></i>
+                <div>Transfer iuran sesuai nominal ke DANA Admin: <b>0813 7133 6009</b> (a.n Admin SKI).</div>
+            </div>
+            <form id="battleForm" onsubmit="registerBattle(event)">
+                <div class="form-group">
+                    <label class="form-label">Nama Lengkap</label>
+                    <input type="text" id="battleName" class="form-input" placeholder="Masukkan nama kamu" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kelas</label>
+                    <input type="text" id="battleClass" class="form-input" placeholder="Contoh: 8A" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pilih Nominal Iuran Battle</label>
+                    <select id="battleNominal" class="form-select" required>
+                        <option value="" disabled selected>-- Pilih Kategori Nominal --</option>
+                        <option value="Rp 5.000">Battle Rp 5.000</option>
+                        <option value="Rp 10.000">Battle Rp 10.000</option>
+                        <option value="Rp 15.000">Battle Rp 15.000</option>
+                        <option value="Rp 20.000">Battle Rp 20.000</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nomor WhatsApp / Pengirim DANA</label>
+                    <input type="text" id="battlePhone" class="form-input" placeholder="08xxxxxxxxxx" required>
+                </div>
+                <button type="submit" class="btn-submit">Kirim Konfirmasi Pendaftaran</button>
+            </form>
+        </div>
+
+        <!-- 3. Embed Daftar Peserta Terkelompok -->
+        <div class="section-box">
+            <div class="section-title"><i class="fa-solid fa-users-rectangle" style="color: #FCD34D;"></i> 3. Daftar Peserta Berdasarkan Kategori</div>
+            <div id="participant-container" style="font-size: 13px; color: var(--text-muted);">Memuat data peserta...</div>
+        </div>
+
+        <!-- 4. Jadwal & Soal Tanya Jawab Online -->
+        <div class="section-box schedule-box">
+            <div class="section-title"><i class="fa-solid fa-clock-rotate-left" style="color: #EC4899;"></i> 4. Jadwal & Ruang Soal Online</div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Jadwal Battle: <b>Minggu Pukul 19.30 WIB</b></p>
+            <p style="font-size: 12px; color: var(--text-muted);">Soal tanya jawab online interaktif akan aktif otomatis di jam tersebut bagi peserta yang sudah terverifikasi.</p>
+            <a href="#" onclick="alert('Ruang soal akan dibuka saat jadwal kompetisi dimulai!')" class="btn-battle-room"><i class="fa-solid fa-door-open"></i> Masuk Ruang Soal Battle</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQNPKsAItX8AZI9dTklDAGb1j4Jrp77FIMgImPX3Xk19P0LFd49_d7ApZ7yx_iyjsT/exec'; // Ganti dengan URL web app anda
+
+    function submitPoll(choice) {
+        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'poll', choice: choice }) })
+        .then(res => res.json())
+        .then(data => { alert("Terima kasih! Suara polling kamu berhasil direkam."); loadPollData(); })
+        .catch(err => alert("Gagal mengirim polling."));
+    }
+
+    function registerBattle(e) {
+        e.preventDefault();
+        const payload = {
+            action: 'register',
+            name: document.getElementById('battleName').value,
+            class: document.getElementById('battleClass').value,
+            nominal: document.getElementById('battleNominal').value,
+            phone: document.getElementById('battlePhone').value
+        };
+        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
+        .then(res => res.json())
+        .then(data => {
+            alert("Pendaftaran berhasil dikirim! Admin akan memverifikasi pembayaran DANA.");
+            document.getElementById('battleForm').reset();
+            loadParticipants();
+        })
+        .catch(err => alert("Terjadi kesalahan saat mendaftar."));
+    }
+
+    function loadPollData() {
+        fetch(SCRIPT_URL + "?action=getPoll")
+        .then(res => res.json())
+        .then(data => { document.getElementById('poll-status').innerHTML = `Total suara Setuju: <b>${data.setuju || 0} siswa</b>`; })
+        .catch(e => {});
+    }
+
+    function loadParticipants() {
+        fetch(SCRIPT_URL + "?action=participants")
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById('participant-container');
+            if (!data || data.length === 0) {
+                container.innerHTML = "Belum ada peserta yang mendaftar.";
+                return;
+            }
+
+            // Kelompokkan berdasarkan nominal
+            let grouped = {};
+            data.forEach(p => {
+                if (!grouped[p.nominal]) grouped[p.nominal] = [];
+                grouped[p.nominal].push(p);
+            });
+
+            let html = "";
+            for (let nominal in grouped) {
+                html += `<div class="category-group">
+                            <div class="category-title"><span>Kategori ${nominal}</span> <span>(${grouped[nominal].length} Peserta)</span></div>`;
+                grouped[nominal].forEach(user => {
+                    let isVerified = user.status.toLowerCase().includes('verifikasi');
+                    let badgeClass = isVerified ? 'status-badge' : 'status-badge verified';
+                    html += `<div class="participant-card">
+                                <span><b>${user.name}</b> (${user.class})</span>
+                                <span class="${badgeClass}">${user.status}</span>
+                             </div>`;
+                });
+                html += `</div>`;
+            }
+            container.innerHTML = html;
+        })
+        .catch(e => {
+            document.getElementById('participant-container').innerHTML = "Gagal memuat daftar peserta.";
+        });
+    }
+
+    window.onload = function() {
+        loadPollData();
+        loadParticipants();
+    };
+</script>
+</body>
+</html>
