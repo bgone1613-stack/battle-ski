@@ -59,6 +59,7 @@
         .section-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: var(--text-main); }
         
         /* Polling */
+        .poll-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .poll-btns { display: flex; gap: 10px; }
         .btn-poll { 
             flex: 1; padding: 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); 
@@ -91,9 +92,9 @@
         .category-title { font-size: 13px; font-weight: 700; color: #34D399; margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; display: flex; justify-content: space-between; }
         .participant-card { 
             background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255,255,255,0.05); 
-            padding: 8px 12px; border-radius: 8px; font-size: 13px; display: flex; justify-content: space-between; margin-bottom: 6px; 
+            padding: 8px 12px; border-radius: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; 
         }
-        .status-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #F59E0B; color: white; }
+        .status-badge { font-size: 10px; padding: 3px 8px; border-radius: 4px; background: #F59E0B; color: white; font-weight: 600; }
         .status-badge.verified { background: #10B981; }
 
         /* Jadwal & Soal Online */
@@ -117,6 +118,10 @@
         <div class="section-box">
             <div class="section-title"><i class="fa-solid fa-square-poll-vertical" style="color: #34D399;"></i> 1. Polling Persetujuan Event</div>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Apakah kamu setuju minggu ini diadakan Battle Cerdas Cermat?</p>
+            <div class="poll-inputs">
+                <input type="text" id="pollName" class="form-input" placeholder="Nama Kamu" required>
+                <input type="text" id="pollClass" class="form-input" placeholder="Kelas (Contoh: 8A)" required>
+            </div>
             <div class="poll-btns">
                 <button class="btn-poll" onclick="submitPoll('Setuju')"><i class="fa-solid fa-check"></i> Setuju</button>
                 <button class="btn-poll" onclick="submitPoll('Tidak')"><i class="fa-solid fa-xmark"></i> Belum Dulu</button>
@@ -158,13 +163,13 @@
             </form>
         </div>
 
-        <!-- 3. Embed Daftar Peserta Terkelompok -->
+        <!-- 3. Daftar Peserta Terkelompok -->
         <div class="section-box">
             <div class="section-title"><i class="fa-solid fa-users-rectangle" style="color: #FCD34D;"></i> 3. Daftar Peserta Berdasarkan Kategori</div>
             <div id="participant-container" style="font-size: 13px; color: var(--text-muted);">Memuat data peserta...</div>
         </div>
 
-        <!-- 4. Jadwal & Soal Tanya Jawab Online -->
+        <!-- 4. Jadwal & Soal Online -->
         <div class="section-box schedule-box">
             <div class="section-title"><i class="fa-solid fa-clock-rotate-left" style="color: #EC4899;"></i> 4. Jadwal & Ruang Soal Online</div>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Jadwal Battle: <b>Minggu Pukul 19.30 WIB</b></p>
@@ -175,12 +180,32 @@
 </div>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQNPKsAItX8AZI9dTklDAGb1j4Jrp77FIMgImPX3Xk19P0LFd49_d7ApZ7yx_iyjsT/exec'; // Ganti dengan URL web app anda
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQNPKsAItX8AZI9dTklDAGb1j4Jrp77FIMgImPX3Xk19P0LFd49_d7ApZ7yx_iyjsT/exec'; // Ganti dengan URL Web App Apps Script anda
 
     function submitPoll(choice) {
-        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'poll', choice: choice }) })
+        const name = document.getElementById('pollName').value.trim();
+        const className = document.getElementById('pollClass').value.trim();
+
+        if (!name || !className) {
+            alert("Mohon isi Nama dan Kelas terlebih dahulu sebelum melakukan polling!");
+            return;
+        }
+
+        const payload = {
+            action: 'poll',
+            name: name,
+            class: className,
+            choice: choice
+        };
+
+        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
         .then(res => res.json())
-        .then(data => { alert("Terima kasih! Suara polling kamu berhasil direkam."); loadPollData(); })
+        .then(data => { 
+            alert("Terima kasih! Suara polling kamu berhasil direkam."); 
+            document.getElementById('pollName').value = '';
+            document.getElementById('pollClass').value = '';
+            loadPollData(); 
+        })
         .catch(err => alert("Gagal mengirim polling."));
     }
 
@@ -193,6 +218,7 @@
             nominal: document.getElementById('battleNominal').value,
             phone: document.getElementById('battlePhone').value
         };
+
         fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
         .then(res => res.json())
         .then(data => {
@@ -206,7 +232,9 @@
     function loadPollData() {
         fetch(SCRIPT_URL + "?action=getPoll")
         .then(res => res.json())
-        .then(data => { document.getElementById('poll-status').innerHTML = `Total suara Setuju: <b>${data.setuju || 0} siswa</b>`; })
+        .then(data => { 
+            document.getElementById('poll-status').innerHTML = `Total suara Setuju: <b>${data.setuju || 0} siswa</b> | Belum: <b>${data.tidak || 0} siswa</b>`; 
+        })
         .catch(e => {});
     }
 
@@ -220,23 +248,29 @@
                 return;
             }
 
-            // Kelompokkan berdasarkan nominal
+            // Kelompokkan berdasarkan nominal iuran
             let grouped = {};
             data.forEach(p => {
-                if (!grouped[p.nominal]) grouped[p.nominal] = [];
-                grouped[p.nominal].push(p);
+                let nom = p.nominal || "Lainnya";
+                if (!grouped[nom]) grouped[nom] = [];
+                grouped[nom].push(p);
             });
 
             let html = "";
             for (let nominal in grouped) {
                 html += `<div class="category-group">
-                            <div class="category-title"><span>Kategori ${nominal}</span> <span>(${grouped[nominal].length} Peserta)</span></div>`;
+                            <div class="category-title"><span>Kategori ${escapeHtml(nominal)}</span> <span>(${grouped[nominal].length} Peserta)</span></div>`;
                 grouped[nominal].forEach(user => {
-                    let isVerified = user.status.toLowerCase().includes('verifikasi');
-                    let badgeClass = isVerified ? 'status-badge' : 'status-badge verified';
+                    let statusText = user.status || "Menunggu Verifikasi";
+                    let isVerified = statusText.toLowerCase().includes('verifikasi') && !statusText.toLowerCase().includes('menunggu');
+                    let badgeClass = isVerified ? 'status-badge verified' : 'status-badge';
+                    
                     html += `<div class="participant-card">
-                                <span><b>${user.name}</b> (${user.class})</span>
-                                <span class="${badgeClass}">${user.status}</span>
+                                <div>
+                                    <b>${escapeHtml(user.name)}</b> (${escapeHtml(user.class)})<br>
+                                    <span style="font-size: 11px; color: var(--text-muted);">HP/DANA: ${escapeHtml(user.phone)}</span>
+                                </div>
+                                <span class="${badgeClass}">${escapeHtml(statusText)}</span>
                              </div>`;
                 });
                 html += `</div>`;
@@ -246,6 +280,11 @@
         .catch(e => {
             document.getElementById('participant-container').innerHTML = "Gagal memuat daftar peserta.";
         });
+    }
+
+    function escapeHtml(text) {
+        if (!text) return "";
+        return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
     window.onload = function() {
